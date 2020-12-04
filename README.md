@@ -6,7 +6,7 @@ Esri tools supporting the management of LiDAR and 3D Data
 <b>LiDAR & Imagery Data Processing Tools:</b>
 
 1.) Get Tiled URL's from S3 Bucket: "get_file_urls_in_s3_bucket.py"
-- Process for recursively crawling a s3 bucket and printing all files.... optionally, supports output of Folders if enabled. Requires Boto3
+- Process for recursively crawling a s3 bucket and writing all files to excel xlsx file.... optionally, supports writing existing Folders if enabled. Requires Boto3
 
 2.) Attribute LiDAR or Image Polygon tiles with URL's: "attribute_poly_tiles_with_urls.py"
 - The process takes the output xlsx file from step 1 and attributes the tiles with the full https:// file paths in the AWS S3 Bucket. 
