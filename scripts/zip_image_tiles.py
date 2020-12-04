@@ -23,15 +23,34 @@ def zipper(in_list, out_file_path):
             zipMe.write(f, compress_type=zipfile.ZIP_DEFLATED)
 
 
-def zipper_gdb(in_folder, out_file_path):
-    assert in_folder.endswith('.gdb'), "Error: file extension {0} not detected in in_folder".format(".gdb")
-    out_file = '{0}'.format(out_file_path)
-    ensure_dir(out_file)
-    with zipfile.ZipFile(out_file, 'w') as zipMe:
-        for root, dirs, files in os.walk(in_folder):
-            for f in files:
-                if not f.endswith('.lock'):
-                    zipMe.write(os.path.join(root, f))
+def zipper_gdb(in_gdb, out_file_name):
+    assert in_gdb.endswith('.gdb'), "Error: file extension {0} not detected in in_folder".format(".gdb")
+    root_dir = os.path.dirname(in_gdb)
+    gdb_name = os.path.basename(in_gdb)
+    myzip = zipfile.ZipFile(os.path.join(root_dir, out_file_name), 'w', zipfile.ZIP_DEFLATED)
+    for folder, subfolder, file in os.walk(os.path.join(root_dir, gdb_name)):
+        for each in subfolder + file:
+            source = os.path.join(folder, each)
+            if not source.endswith(".lock"):
+                # remove the absolute path to compose arcname
+                # also handles the remaining leading path separator with lstrip
+                arcname = source[len(root_dir):].lstrip(os.sep)
+                # write the file under a different name in the archive
+                myzip.write(source, arcname=arcname)
+    myzip.close()
+
+
+def zip_folder(in_folder, out_file_name):
+    myzip = zipfile.ZipFile(os.path.join(in_folder, out_file_name), 'w', zipfile.ZIP_DEFLATED)
+    for folder, subfolder, file in os.walk(in_folder):
+        for each in subfolder + file:
+            source = os.path.join(folder, each)
+            # remove the absolute path to compose arcname
+            # also handles the remaining leading path separator with lstrip
+            arcname = source[len(in_folder):].lstrip(os.sep)
+            # write the file under a different name in the archive
+            myzip.write(source, arcname=arcname)
+    myzip.close()
 
 
 # TODO: do something with folder-based file structures. ex: GDB .... user the zipper_folder_structure() function above.
