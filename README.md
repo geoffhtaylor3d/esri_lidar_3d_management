@@ -14,7 +14,7 @@ Esri tools for managing LiDAR and 3D Data
 3.) zip image tiles.... zip .tif, jpg, and non-folder based structured files files: "zip_image_tiles.py"
 - Note GDB and folder zipping functions are complete but just need to be incorporated in codebase with conditional logic.
 
-<b>3D Multipatch Data Management Tools:<b/>
+<b>3D Multipatch Data Management Tools:</b>
 
 1.) Tile Multpiatch Models by Polgyon.. ex: LiDAR or Image Tile Grid: "tile_multipatch.zip"
 - Uses best-fit area of the model to determing which polygon the model should be attributed for
