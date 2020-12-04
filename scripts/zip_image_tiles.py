@@ -5,7 +5,10 @@ import os
 in_directory = r'imagery'
 out_directory = r'imagery_zipped'
 
+
+# Constants - DO NOT MODIFY
 supported_folder_extensions = ['gdb']
+
 # Begin Script
 
 
