@@ -1,5 +1,5 @@
 # esri_lidar_3d_management
-Esri tools for managing LiDAR and 3D Data
+Esri tools supporting the management of LiDAR and 3D Data
 
 **The Repo is a work in progress with many working python scripts.**
 
