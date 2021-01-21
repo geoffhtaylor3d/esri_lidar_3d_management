@@ -1,6 +1,6 @@
 ####################################
 #   File name: attribute_poly_tiles_with_urls.py
-#   About: Attributes Imagerey and LiDAR polygon tile reference geometry with file url's
+#   About: Attributes Imagery and LiDAR polygon tile reference geometry with file url's
 #   Author: Geoff Taylor | Imagery & Remote Sensing Team | Esri
 #   Date created: 01/21/2021
 #   Date last modified: 01/21/2021
@@ -81,7 +81,7 @@ def process():
 
 
 if "name" == "__main__":
-    debug = True
+    debug = False
     if debug:
         in_fc = r'C:\Users\geof7015\Documents\ArcGIS\Projects\Leveraging_LiDAR\scratch\SurfaceRasters\SurfaceMosaics.gdb\Tiles'
         file_names = ['building_dsm', 'building_ndsm', 'dsm', 'dtm', 'ndsm']
