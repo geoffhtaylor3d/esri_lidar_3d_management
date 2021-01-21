@@ -146,7 +146,7 @@ def process():
 
 
 if "name" == "__main__":
-    debug = True
+    debug = False
     if debug:
         # User Input Parameters
         in_buildings = r'C:\Users\geof7015\Documents\ArcGIS\Projects\Ohio_LiDAR_Demo\Ohio_LiDAR_Demo.gdb\Building_3D_manual'

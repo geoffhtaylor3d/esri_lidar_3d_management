@@ -75,7 +75,7 @@ def process():
 
 
 if "name" == "__main__":
-    debug = True
+    debug = False
     if debug:
         # User inputs
         in_directory = r'imagery'

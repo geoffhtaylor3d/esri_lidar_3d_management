@@ -39,7 +39,7 @@ def process():
 
 
 if "name" == "__main__":
-    debug = True
+    debug = False
     if debug:
         # User Input Variables
         bucket_name = 'esri-imagery-demo-data'
