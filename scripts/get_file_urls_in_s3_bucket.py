@@ -38,7 +38,7 @@ def process():
         df.to_excel(writer)
 
 
-if "name" == "__main__":
+if __name__ == "__main__":
     debug = False
     if debug:
         # User Input Variables

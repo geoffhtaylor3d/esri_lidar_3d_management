@@ -99,7 +99,7 @@ def process():
                 Delete(folder)
 
 
-if "name" == "__main__":
+if __name__ == "__main__":
     debug = False
     if debug:
         # Input User Parameters
@@ -117,3 +117,4 @@ if "name" == "__main__":
         zip_files = GetParameterAsText(3)
         out_folder = GetParameterAsText(4)
         out_file_basename = GetParameterAsText(5)
+    process()

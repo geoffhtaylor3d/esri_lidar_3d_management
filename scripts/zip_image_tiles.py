@@ -74,7 +74,7 @@ def process():
                 files_to_zip.append(file)
 
 
-if "name" == "__main__":
+if __name__ == "__main__":
     debug = False
     if debug:
         # User inputs

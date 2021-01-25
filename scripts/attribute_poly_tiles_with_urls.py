@@ -80,7 +80,7 @@ def process():
     Delete(temp_fc)
 
 
-if "name" == "__main__":
+if __name__ == "__main__":
     debug = False
     if debug:
         in_fc = r'C:\Users\geof7015\Documents\ArcGIS\Projects\Leveraging_LiDAR\scratch\SurfaceRasters\SurfaceMosaics.gdb\Tiles'

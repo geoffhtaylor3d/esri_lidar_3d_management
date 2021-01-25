@@ -145,7 +145,7 @@ def process():
         print(GetMessages(2))
 
 
-if "name" == "__main__":
+if __name__ == "__main__":
     debug = False
     if debug:
         # User Input Parameters
