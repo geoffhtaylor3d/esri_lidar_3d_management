@@ -11,6 +11,7 @@ https://arcg.is/0Kb1ib
 1.) zip image tiles.... zip .tif, jpg, and non-folder based structured files files: "zip_image_tiles.py"
 - Note GDB and folder zipping functions are complete but just need to be incorporated in codebase with conditional logic.
 - Be sure to zip imagery tiles that have auxillary files ( > 1 file per image) prior to running # 3 below.
+- Once imagery is zipped and zipped imagery + lidar tiles uploaded to the s3 bucket then run step 2.
 
 2.) Get Tiled URL's from S3 Bucket: "get_file_urls_in_s3_bucket.py"
 - Process for recursively crawling a s3 bucket and writing all files to excel xlsx file.... optionally, supports writing existing Folders if enabled. Requires Boto3
