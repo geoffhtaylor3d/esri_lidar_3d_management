@@ -11,11 +11,12 @@ https://arcg.is/0Kb1ib
 1.) Get Tiled URL's from S3 Bucket: "get_file_urls_in_s3_bucket.py"
 - Process for recursively crawling a s3 bucket and writing all files to excel xlsx file.... optionally, supports writing existing Folders if enabled. Requires Boto3
 
-2.) Attribute LiDAR or Image Polygon tiles with URL's: "attribute_poly_tiles_with_urls.py"
-- The process takes the output xlsx file from step 1 and attributes the tiles with the full https:// file paths in the AWS S3 Bucket. 
-
-3.) zip image tiles.... zip .tif, jpg, and non-folder based structured files files: "zip_image_tiles.py"
+4.) zip image tiles.... zip .tif, jpg, and non-folder based structured files files: "zip_image_tiles.py"
 - Note GDB and folder zipping functions are complete but just need to be incorporated in codebase with conditional logic.
+- Be sure to zip imagery tiles that have auxillary files ( > 1 file per image) prior to running # 3 below.
+
+3.) Attribute LiDAR or Image Polygon tiles with URL's: "attribute_poly_tiles_with_urls.py"
+- The process takes the output xlsx file from step 1 and attributes the tiles with the full https:// file paths in the AWS S3 Bucket. 
 
 <b>3D Multipatch Data Management Tools:</b>
 
