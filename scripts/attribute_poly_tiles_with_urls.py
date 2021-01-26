@@ -41,7 +41,6 @@ def process():
                         fc_r[1] = url
                 cursor.updateRow(fc_r)
 
-
     # Attribute the LiDAR Derivatives
     for n in file_names:
         attribute_tile(temp_fc, tile_name, df, n)
@@ -80,21 +79,34 @@ def process():
     Delete(temp_fc)
 
 
+def strlist2list(file_names):
+    if ";" in file_names:
+        return file_names.split(";")
+    else:
+        return [file_names]
+
+
 if __name__ == "__main__":
     debug = False
     if debug:
-        in_fc = r'C:\Users\geof7015\Documents\ArcGIS\Projects\Leveraging_LiDAR\scratch\SurfaceRasters\SurfaceMosaics.gdb\Tiles'
+        in_fc = r'C:\Users\geof7015\Documents\ArcGIS\Projects\Ohio_LiDAR_Demo\Ohio_LiDAR_Demo.gdb\LiDAR_Processed_PointFileInf'
         file_names = ['building_dsm', 'building_ndsm', 'dsm', 'dtm', 'ndsm']
         in_lidar_format = 'zlas'
-        in_xlsx = r'../s3_bucket_files3.xlsx'
+        in_xlsx = r'C:\Users\geof7015\Documents\ArcGIS\Projects\Ohio_LiDAR_Demo\s3_bucket_files3_4.xlsx'
         xlsx_row_name = 'full_path'
-        out_fc = r'C:\Users\geof7015\Documents\ArcGIS\Projects\Leveraging_LiDAR\scratch\SurfaceRasters\Tiles.shp'
+        out_fc = r'C:\Users\geof7015\Documents\ArcGIS\Projects\Ohio_LiDAR_Demo\Ohio_LiDAR_Demo.gdb\letsTestIt'
     else:
-        from arcpy import GetParameterAsText
+        from arcpy import GetParameterAsText, AddMessage
         in_fc = GetParameterAsText(0)
-        file_names = GetParameterAsText(1)
+        file_names = strlist2list(GetParameterAsText(1))
         in_lidar_format = GetParameterAsText(2)
         in_xlsx = GetParameterAsText(3)
-        xlsx_row_name = GetParameterAsText(4)
-        out_fc = GetParameterAsText(5)
+        xlsx_row_name = 'full_path'
+        out_fc = GetParameterAsText(4)
+        AddMessage(in_fc)
+        AddMessage(file_names)
+        AddMessage(in_lidar_format)
+        AddMessage(in_xlsx)
+        AddMessage(xlsx_row_name)
+        AddMessage(out_fc)
     process()
