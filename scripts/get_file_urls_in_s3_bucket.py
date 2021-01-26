@@ -26,8 +26,6 @@ def make_boolean(in_value):
 
 
 def process():
-    from arcpy import AddMessage
-
     # TODO: Add User Error Reporting alerting user of issue with accessing their bucket.
     # Begin Script
     bucket_url = 'https://s3.{0}.amazonaws.com/{1}/'.format(region, bucket_name)
@@ -64,5 +62,4 @@ if __name__ == "__main__":
         region = GetParameterAsText(1)
         out_spreadsheet = GetParameterAsText(2)
         list_folders = make_boolean(GetParameterAsText(3))
-        print(list_folders)
     process()
