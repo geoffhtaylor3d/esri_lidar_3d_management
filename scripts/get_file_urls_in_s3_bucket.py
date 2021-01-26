@@ -27,12 +27,8 @@ def make_boolean(in_value):
 
 def process():
     from arcpy import AddMessage
-    AddMessage(bucket_name)
-    AddMessage(region)
-    AddMessage(list_folders)
-    AddMessage(type(list_folders))
-    print(bucket_name)
-    print(region)
+
+    # TODO: Add User Error Reporting alerting user of issue with accessing their bucket.
     # Begin Script
     bucket_url = 'https://s3.{0}.amazonaws.com/{1}/'.format(region, bucket_name)
     conn = client('s3')  # again assumes boto.cfg setup, assume AWS S3
