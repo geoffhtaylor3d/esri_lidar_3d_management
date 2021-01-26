@@ -17,7 +17,22 @@ except ModuleNotFoundError:
     print("conda install -c anaconda boto3")
 
 
+def make_boolean(in_value):
+    # Ensure list folders text-based boolean input is converted to boolean
+    if in_value.lower() in ['true', '1', 't', 'y', 'yes', 'yeah', 'yup', 'certainly', 'uh-huh']:
+        return True
+    else:
+        return False
+
+
 def process():
+    from arcpy import AddMessage
+    AddMessage(bucket_name)
+    AddMessage(region)
+    AddMessage(list_folders)
+    AddMessage(type(list_folders))
+    print(bucket_name)
+    print(region)
     # Begin Script
     bucket_url = 'https://s3.{0}.amazonaws.com/{1}/'.format(region, bucket_name)
     conn = client('s3')  # again assumes boto.cfg setup, assume AWS S3
@@ -52,4 +67,6 @@ if __name__ == "__main__":
         bucket_name = GetParameterAsText(0)
         region = GetParameterAsText(1)
         out_spreadsheet = GetParameterAsText(2)
-        list_folders = GetParameterAsText(3)
+        list_folders = make_boolean(GetParameterAsText(3))
+        print(list_folders)
+    process()
