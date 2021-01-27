@@ -3,7 +3,7 @@
 #   About: Attributes Imagery and LiDAR polygon tile reference geometry with file url's
 #   Author: Geoff Taylor | Imagery & Remote Sensing Team | Esri
 #   Date created: 01/21/2021
-#   Date last modified: 01/21/2021
+#   Date last modified: 01/26/2021
 #   Python Version: 3.7
 ####################################
 
@@ -96,17 +96,11 @@ if __name__ == "__main__":
         xlsx_row_name = 'full_path'
         out_fc = r'C:\Users\geof7015\Documents\ArcGIS\Projects\Ohio_LiDAR_Demo\Ohio_LiDAR_Demo.gdb\letsTestIt'
     else:
-        from arcpy import GetParameterAsText, AddMessage
+        from arcpy import GetParameterAsText
         in_fc = GetParameterAsText(0)
         file_names = strlist2list(GetParameterAsText(1))
         in_lidar_format = GetParameterAsText(2)
         in_xlsx = GetParameterAsText(3)
         xlsx_row_name = 'full_path'
         out_fc = GetParameterAsText(4)
-        AddMessage(in_fc)
-        AddMessage(file_names)
-        AddMessage(in_lidar_format)
-        AddMessage(in_xlsx)
-        AddMessage(xlsx_row_name)
-        AddMessage(out_fc)
     process()

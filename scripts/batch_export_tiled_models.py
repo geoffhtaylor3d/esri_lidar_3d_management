@@ -3,7 +3,7 @@
 #   About: Process for batch exporting multiplatch models that have been pre-attributed by tile_id.
 #   Author: Geoff Taylor | Imagery & Remote Sensing Team | Esri
 #   Date created: 01/21/2021
-#   Date last modified: 01/21/2021
+#   Date last modified: 01/26/2021
 #   Python Version: 3.7
 ####################################
 
@@ -16,6 +16,15 @@ import zipfile
 
 
 # Begin Script
+
+def make_boolean(in_value):
+    # Ensure list folders text-based boolean input is converted to boolean
+    if in_value.lower() in ['true', '1', 't', 'y', 'yes', 'yeah', 'yup', 'certainly', 'uh-huh', 'bingo', 'dude']:
+        return True
+    else:
+        return False
+
+
 def process():
     def ensure_dir(file_path):
         directory = path.dirname(file_path)
@@ -114,7 +123,7 @@ if __name__ == "__main__":
         in_buildings = GetParameterAsText(0)
         tile_fid = GetParameterAsText(1)
         out_format = GetParameterAsText(2)
-        zip_files = GetParameterAsText(3)
+        zip_files = make_boolean(GetParameterAsText(3))
         out_folder = GetParameterAsText(4)
         out_file_basename = GetParameterAsText(5)
     process()

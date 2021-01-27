@@ -3,7 +3,7 @@
 #   About: Process for obtainng the urls for all files in a amazon s3 bucket
 #   Author: Geoff Taylor | Imagery & Remote Sensing Team | Esri
 #   Date created: 01/21/2021
-#   Date last modified: 01/21/2021
+#   Date last modified: 01/26/2021
 #   Python Version: 3.7
 ####################################
 

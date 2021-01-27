@@ -3,7 +3,7 @@
 #   About: Process for zipping imagery tiles in a folder.
 #   Author: Geoff Taylor | Imagery & Remote Sensing Team | Esri
 #   Date created: 01/21/2021
-#   Date last modified: 01/21/2021
+#   Date last modified: 01/26/2021
 #   Python Version: 3.7
 ####################################
 
@@ -78,9 +78,10 @@ if __name__ == "__main__":
     debug = False
     if debug:
         # User inputs
-        in_directory = r'imagery'
-        out_directory = r'imagery_zipped'
+        in_directory = r'C:\Users\geof7015\Documents\ArcGIS\Projects\Leveraging_LiDAR\scratch\SurfaceRasters'
+        out_directory = r'C:\Users\geof7015\Documents\ArcGIS\Projects\Leveraging_LiDAR\scratch\YoMama'
     else:
         from arcpy import GetParameterAsText
         in_directory = GetParameterAsText(0)
         out_directory = GetParameterAsText(1)
+    process()
