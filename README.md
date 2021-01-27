@@ -6,6 +6,9 @@ https://arcg.is/0Kb1ib
 
 ** DOCUMENTAION IN PROGRESS
 
+Recommended workflow for preparing LiDAR and generating Image Surface Tiles as input to the below tools:
+https://community.esri.com/t5/3d-blog/leveraging-lidar-template/ba-p/901767
+
 <b>LiDAR & Imagery Data Processing Tools:</b>
 
 1.) zip image tiles.... zip .tif, jpg, and non-folder based structured files files: "zip_image_tiles.py"
