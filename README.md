@@ -32,5 +32,3 @@ https://solutions.arcgis.com/local-government/help/3d-basemaps/
 
 2.) Batch Export Multipatch models for Data Management needs:
 - Supports Zipped and Unzipped MultipatchSHP, MultipatchGDB, Colladae DAE files.
-
-Again, this is in dev but all above scripts should be fully functional as described.
