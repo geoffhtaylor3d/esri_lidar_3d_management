@@ -57,29 +57,41 @@ def process():
         myzip.close()
 
     # TODO: do something with folder-based file structures. ex: GDB .... user the zipper_folder_structure() function above.
+    from arcpy import AddMessage
+
+    files_in_dir = []
+    for root, dirs, files in os.walk(in_directory):
+        for filename in files:
+            files_in_dir.append([root, filename])
 
     file_name_list = []
     files_to_zip = []
-    for root, dirs, files in os.walk(in_directory):
-        for filename in files:
-            file = os.path.join(root, filename)
-            file_partitioned = filename.partition('.')[0]
-            if file_partitioned not in file_name_list:
-                if len(files_to_zip) > 1:
-                    out_file_path = files_to_zip[0].replace(in_directory, out_directory).partition('.')[0]
-                    zipper(files_to_zip, out_file_path)
-                    files_to_zip = []
-                file_name_list.append(file_partitioned)
-            else:
-                files_to_zip.append(file)
+    for f in files_in_dir:
+        root = f[0]
+        filename = f[1]
+        file = os.path.join(root, filename)
+        file_partitioned = filename.partition('.')[0]
+        if file_partitioned not in file_name_list:
+            if len(files_to_zip) > 1:
+                out_file_path = files_to_zip[0].replace(in_directory, out_directory).partition('.')[0]
+                zipper(files_to_zip, out_file_path)
+                AddMessage(files_to_zip)
+                files_to_zip = []
+            file_name_list.append(file_partitioned)
+        else:
+            files_to_zip.append(file)
+            # If last file in directory for processing
+            if root == files_in_dir[-1][0] and filename == files_in_dir[-1][1]:
+                out_file_path = files_to_zip[0].replace(in_directory, out_directory).partition('.')[0]
+                zipper(files_to_zip, out_file_path)
 
 
 if __name__ == "__main__":
     debug = False
     if debug:
         # User inputs
-        in_directory = r'C:\Users\geof7015\Documents\ArcGIS\Projects\Leveraging_LiDAR\scratch\SurfaceRasters'
-        out_directory = r'C:\Users\geof7015\Documents\ArcGIS\Projects\Leveraging_LiDAR\scratch\YoMama'
+        in_directory = r'C:\Users\geof7015\Documents\ArcGIS\Projects\Ohio_LiDAR_Demo\yo'
+        out_directory = r'C:\Users\geof7015\Documents\ArcGIS\Projects\Ohio_LiDAR_Demo\yo_zipped_60'
     else:
         from arcpy import GetParameterAsText
         in_directory = GetParameterAsText(0)
