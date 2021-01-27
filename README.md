@@ -4,7 +4,8 @@ Esri tools supporting the management of LiDAR and 3D Data
 Example 3D web-based download app using the results of the following scripts.
 https://arcg.is/0Kb1ib
 
-** DOCUMENTAION IN PROGRESS **
+** DOCUMENTAION IN PROGRESS
+
 <b>LiDAR & Imagery Data Processing Tools:</b>
 
 1.) zip image tiles.... zip .tif, jpg, and non-folder based structured files files: "zip_image_tiles.py"
