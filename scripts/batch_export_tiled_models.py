@@ -67,6 +67,10 @@ def process():
                 myzip.write(source, arcname=arcname)
         myzip.close()
 
+    # Ensure output folder exists
+    if not path.exists(out_folder):
+        makedirs(out_folder)
+
     unique_values = set(row[0] for row in da.SearchCursor(in_buildings, tile_fid))
     for v in unique_values:
         print(v)
@@ -75,7 +79,7 @@ def process():
         out_name = out_file_basename + "_{0}".format(val)
         if out_format == "Multipatch SHP":
             out_file = path.join(out_folder, out_name+'.shp')
-            Select(in_buildings, out_file, "FID_tiles = {0}".format(val))
+            Select(in_buildings, out_file, "{0} = {1}".format(tile_fid, val))
             if zip_files:
                 stem = path.join(out_folder, out_name)
                 in_list = [out_file,
@@ -92,15 +96,17 @@ def process():
             gdb = path.join(out_folder, out_name + '.gdb')
             CreateFileGDB(out_folder, out_name + '.gdb')
             out_file = path.join(gdb, out_name)
-            Select(in_buildings, out_file, "FID_tiles = {0}".format(val))
+            Select(in_buildings, out_file, "{0} = {1}".format(tile_fid, val))
             if zip_files:
                 out_zip = out_name + '.zip'
                 zipper_gdb(gdb, out_zip)
                 Delete(gdb)
         if out_format == "DAE":
             folder = path.join(out_folder, out_name)
-            ensure_dir(folder)
-            MakeFeatureLayer(in_buildings, "bldg_layer", "FID_tiles = {0}".format(val), None)
+            # Ensure output folder exists
+            if not path.exists(folder):
+                makedirs(folder)
+            MakeFeatureLayer(in_buildings, "bldg_layer", "{0} = {1}".format(tile_fid, val), None)
             MultipatchToCollada("bldg_layer", folder, "PREPEND_NONE", "OBJECTID")
             Delete("bldg_layer")
             if zip_files:
