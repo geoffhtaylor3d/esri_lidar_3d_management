@@ -8,6 +8,8 @@ https://arcg.is/0Kb1ib
 
 Recommended workflow for preparing LiDAR and generating Image Surface Tiles as input to the below tools:
 https://community.esri.com/t5/3d-blog/leveraging-lidar-template/ba-p/901767
+To generate the 3D building models use the surface rasters from the above "Leveraging LiDAR workflow" in the 3D Basemaps Solution:
+https://solutions.arcgis.com/local-government/help/3d-basemaps/
 
 <b>LiDAR & Imagery Data Processing Tools:</b>
 
