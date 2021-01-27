@@ -10,7 +10,7 @@
 from arcpy.analysis import Select
 from arcpy.management import CreateFileGDB, Delete, MakeFeatureLayer
 from arcpy.conversion import MultipatchToCollada
-from arcpy import da
+from arcpy import AddError, da
 from os import path, makedirs, walk, sep
 import zipfile
 
@@ -67,51 +67,70 @@ def process():
                 myzip.write(source, arcname=arcname)
         myzip.close()
 
-    # Ensure output folder exists
-    if not path.exists(out_folder):
-        makedirs(out_folder)
 
-    unique_values = set(row[0] for row in da.SearchCursor(in_buildings, tile_fid))
-    for v in unique_values:
-        print(v)
+    class LicenseError(Exception):
+        pass
 
-    for val in unique_values:
-        out_name = out_file_basename + "_{0}".format(val)
-        if out_format == "Multipatch SHP":
-            out_file = path.join(out_folder, out_name+'.shp')
-            Select(in_buildings, out_file, "{0} = {1}".format(tile_fid, val))
-            if zip_files:
-                stem = path.join(out_folder, out_name)
-                in_list = [out_file,
-                           '{}.shp.xml'.format(stem),
-                           '{}.shx'.format(stem),
-                           '{}.sbx'.format(stem),
-                           '{}.sbn'.format(stem),
-                           '{}.prj'.format(stem),
-                           '{}.dbf'.format(stem),
-                           '{}.cpg'.format(stem)]
-                zipper(in_list, stem)
-                Delete(out_file)
-        if out_format == "Multipatch GDB":
-            gdb = path.join(out_folder, out_name + '.gdb')
-            CreateFileGDB(out_folder, out_name + '.gdb')
-            out_file = path.join(gdb, out_name)
-            Select(in_buildings, out_file, "{0} = {1}".format(tile_fid, val))
-            if zip_files:
-                out_zip = out_name + '.zip'
-                zipper_gdb(gdb, out_zip)
-                Delete(gdb)
-        if out_format == "DAE":
-            folder = path.join(out_folder, out_name)
-            # Ensure output folder exists
-            if not path.exists(folder):
-                makedirs(folder)
-            MakeFeatureLayer(in_buildings, "bldg_layer", "{0} = {1}".format(tile_fid, val), None)
-            MultipatchToCollada("bldg_layer", folder, "PREPEND_NONE", "OBJECTID")
-            Delete("bldg_layer")
-            if zip_files:
-                zip_folder(folder, folder + ".zip")
-                Delete(folder)
+    try:
+        if CheckExtension("3D") == "Available":
+            CheckOutExtension("3D")
+        else:
+            # raise a custom exception
+            raise LicenseError
+
+        # Ensure output folder exists
+        if not path.exists(out_folder):
+            makedirs(out_folder)
+
+        unique_values = set(row[0] for row in da.SearchCursor(in_buildings, tile_fid))
+        for v in unique_values:
+            print(v)
+
+        for val in unique_values:
+            out_name = out_file_basename + "_{0}".format(val)
+            if out_format == "Multipatch SHP":
+                out_file = path.join(out_folder, out_name+'.shp')
+                Select(in_buildings, out_file, "{0} = {1}".format(tile_fid, val))
+                if zip_files:
+                    stem = path.join(out_folder, out_name)
+                    in_list = [out_file,
+                               '{}.shp.xml'.format(stem),
+                               '{}.shx'.format(stem),
+                               '{}.sbx'.format(stem),
+                               '{}.sbn'.format(stem),
+                               '{}.prj'.format(stem),
+                               '{}.dbf'.format(stem),
+                               '{}.cpg'.format(stem)]
+                    zipper(in_list, stem)
+                    Delete(out_file)
+            if out_format == "Multipatch GDB":
+                gdb = path.join(out_folder, out_name + '.gdb')
+                CreateFileGDB(out_folder, out_name + '.gdb')
+                out_file = path.join(gdb, out_name)
+                Select(in_buildings, out_file, "{0} = {1}".format(tile_fid, val))
+                if zip_files:
+                    out_zip = out_name + '.zip'
+                    zipper_gdb(gdb, out_zip)
+                    Delete(gdb)
+            if out_format == "DAE":
+                folder = path.join(out_folder, out_name)
+                # Ensure output folder exists
+                if not path.exists(folder):
+                    makedirs(folder)
+                MakeFeatureLayer(in_buildings, "bldg_layer", "{0} = {1}".format(tile_fid, val), None)
+                MultipatchToCollada("bldg_layer", folder, "PREPEND_NONE", "OBJECTID")
+                Delete("bldg_layer")
+                if zip_files:
+                    zip_folder(folder, folder + ".zip")
+                    Delete(folder)
+
+        # Check back in 3D Analyst license
+        CheckInExtension("3D")
+    except LicenseError:
+        AddError("3D Analyst license is unavailable")
+        print("3D Analyst license is unavailable")
+    except ExecuteError:
+        print(GetMessages(2))
 
 
 if __name__ == "__main__":

@@ -8,13 +8,20 @@
 ####################################
 
 import pandas as pd
+from arcpy import AddError
 # Ensure Amazon AWS boto3 is installed
 try:
     from boto3 import client
 except ModuleNotFoundError:
+    AddError("boto3 required to run process. Detected Boto3 missing.")
+    AddError("install boto3 using conda")
+    AddError("conda install -c anaconda boto3")
+    AddError("learn more on Boto3 https://boto3.amazonaws.com/v1/documentation/api/latest/guide/quickstart.html#configuration")
     print("boto3 required to run process. Detected Boto3 missing.")
     print("install boto3 using conda")
     print("conda install -c anaconda boto3")
+    print("learn more on Boto3 https://boto3.amazonaws.com/v1/documentation/api/latest/guide/quickstart.html#configuration")
+
 
 
 def make_boolean(in_value):
@@ -28,30 +35,49 @@ def make_boolean(in_value):
 def process():
     # TODO: Add User Error Reporting alerting user of issue with accessing their bucket.
     # Begin Script
+    class LicenseError(Exception):
+        pass
+
     try:
-        bucket_url = 'https://s3.{0}.amazonaws.com/{1}/'.format(region, bucket_name)
-        conn = client('s3')  # again assumes boto.cfg setup, assume AWS S3
-        f_list = []
-        fp_list = []
-        for key in conn.list_objects(Bucket=bucket_name)['Contents']:
-            if not key['Key'].endswith('/') and list_folders is False:
-                f_list.append(key['Key'])
-                fp_list.append(bucket_url + key['Key'])
-            if list_folders is True:
-                f_list.append(key['Key'])
-                fp_list.append(bucket_url + key['Key'])
+        if CheckExtension("ImageAnalyst") == "Available":
+            CheckOutExtension("ImageAnalyst")
+        else:
+            # raise a custom exception
+            raise LicenseError
+        try:
+            bucket_url = 'https://s3.{0}.amazonaws.com/{1}/'.format(region, bucket_name)
+            conn = client('s3')  # again assumes boto.cfg setup, assume AWS S3
+            f_list = []
+            fp_list = []
+            for key in conn.list_objects(Bucket=bucket_name)['Contents']:
+                if not key['Key'].endswith('/') and list_folders is False:
+                    f_list.append(key['Key'])
+                    fp_list.append(bucket_url + key['Key'])
+                if list_folders is True:
+                    f_list.append(key['Key'])
+                    fp_list.append(bucket_url + key['Key'])
 
-        # Create a Pandas dataframe from the data.
-        df = pd.DataFrame({'bucket_url': bucket_url, 'key': f_list, 'full_path': fp_list})
+            # Create a Pandas dataframe from the data.
+            df = pd.DataFrame({'bucket_url': bucket_url, 'key': f_list, 'full_path': fp_list})
 
-        with pd.ExcelWriter(out_spreadsheet) as writer:
-            df.to_excel(writer)
-    except NoCredentialsError:
-        err_str = 'Detected Boto3 Credentials are not set. see the following instructions ' \
-                  'https://boto3.amazonaws.com/v1/documentation/api/latest/guide/quickstart.html#configuration '
-        raiseValueError(err_str)
-    except s3_client.exceptions.NoSuchBucket:
-        raise ValueError('Aws bucket %s does not exist' % bucket_name)
+            with pd.ExcelWriter(out_spreadsheet) as writer:
+                df.to_excel(writer)
+        except NoCredentialsError:
+            err_str = 'Detected Boto3 Credentials are not set. see the following instructions ' \
+                      'https://boto3.amazonaws.com/v1/documentation/api/latest/guide/quickstart.html#configuration'
+            AddError(err_str)
+            raiseValueError(err_str)
+        except s3_client.exceptions.NoSuchBucket:
+            AddError('Aws bucket %s does not exist' % bucket_name)
+            raise ValueError('Aws bucket %s does not exist' % bucket_name)
+        # Check back in Image Analyst license
+        CheckInExtension("ImageAnalyst")
+    except LicenseError:
+        AddError("ImageAnalyst license is unavailable")
+        print("ImageAnalyst license is unavailable")
+    except ExecuteError:
+        AddError(GetMessages(2))
+        print(GetMessages(2))
 
 
 if __name__ == "__main__":
