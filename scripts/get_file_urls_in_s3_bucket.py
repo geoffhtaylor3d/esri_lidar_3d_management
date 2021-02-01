@@ -8,7 +8,7 @@
 ####################################
 
 import pandas as pd
-from arcpy import AddError
+from arcpy import AddError, CheckExtension, CheckOutExtension, CheckInExtension
 # Ensure Amazon AWS boto3 is installed
 try:
     from boto3 import client
