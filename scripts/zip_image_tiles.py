@@ -9,7 +9,7 @@
 
 import zipfile
 import os
-from arcpy import AddError, CheckExtension, CheckOutExtension, LicenseError
+from arcpy import AddError, CheckExtension, CheckOutExtension
 
 
 # Begin Script
