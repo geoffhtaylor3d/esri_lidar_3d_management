@@ -2,8 +2,8 @@
 #   File name: las_to_numpy.py
 #   About: Process for iteratively converting las tiles to numpy arrays for processing
 #   Author: Geoff Taylor | Imagery & Remote Sensing Team | Esri
-#   Date created: 01/21/2021
-#   Date last modified: 01/26/2021
+#   Date created: 02/03/2021
+#   Date last modified: 02/03/2021
 #   Python Version: 3.7
 ####################################
 
