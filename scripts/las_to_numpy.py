@@ -17,15 +17,30 @@ from os import listdir
 import numpy as np
 
 
+def array_2d_to_3d(in_2d_array):
+    return np.array([[x for x in y] for y in in_2d_array])
+
+
 def esri_numpy_operation_here(lidar_points):
     AddMessage('detected {} points in numpy array'.format(lidar_points.size))
     print("first 10 rows in numpy array")
     print(lidar_points[:10])
+    print("Data Type: {}".format(type(lidar_points)))
+    print("Array Shape: {)".format(lidar_points.shape))
+    print("Array Number of Dimensions: {}".format(lidar_points.ndim))
 
-    # from sklearn.cluster import dbscan
+    # Convert values from 8-bit points to 64-bit points for processing in scikit
+    pts_64 = lidar_points.view(np.float64).reshape(lidar_points.shape + (-1,))
+
+    # Example of running scikit learn
     # Implement one of the following algorithms
     # https://scikit-learn.org/stable/modules/generated/sklearn.cluster.OPTICS.html  # sklearn.cluster.OPTICS
     # https://scikit-learn.org/stable/modules/generated/sklearn.cluster.DBSCAN.html  # sklearn.cluster.DBSCAN
+    from sklearn.cluster import OPTICS
+    dist = 10
+    mimumum_samples = 4
+    clustering = OPTICS(min_samples=mimumum_samples, max_eps=dist, n_jobs=-1).fit(pts_64)
+    print(clustering.labels_[:200])
 
 
 def las_tile_to_numpy(lidar_tile, sr, returns, class_codes):
@@ -47,8 +62,9 @@ def las_tile_to_numpy(lidar_tile, sr, returns, class_codes):
                     input_coordinate_system=sr)
 
     lidar_points = da.FeatureClassToNumPyArray(in_table=temp_pts_multi,
-                                               #field_names=["OID@", "SHAPE@X", "SHAPE@Y", "SHAPE@Z"],
+                                               # field_names=["OID@", "SHAPE@X", "SHAPE@Y", "SHAPE@Z"],
                                                field_names=["SHAPE@X", "SHAPE@Y", "SHAPE@Z"],
+                                               # field_names=["SHAPE@XYZ"],
                                                spatial_reference=sr,
                                                explode_to_points=True)
     Delete(temp_pts_multi)
@@ -98,7 +114,7 @@ def las_tiles_to_numpy(in_lidar_folder, sr, lidar_format, returns, class_codes):
 
 if __name__ == "__main__":
     # Input User Parameters
-    in_lidar_folder = r'C:\Users\geof7015\Documents\ArcGIS\Projects\LiDAR_Test\las'
+    in_lidar_folder = r'C:\Users\geof7015\Documents\ArcGIS\Projects\LiDAR_Test\las_thinned_1m'
     srXY = 6347
     srZ = 115755
     lidar_format = "las"
