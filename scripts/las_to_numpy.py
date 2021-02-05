@@ -15,23 +15,30 @@ from os.path import join, splitext
 import arcpy.da
 from os import listdir
 import numpy as np
+from arcgis.features import GeoAccessor
+import pandas as pd
 
 
-def array_2d_to_3d(in_2d_array):
-    return np.array([[x for x in y] for y in in_2d_array])
+def pandas_operation_here(lidar_points):
+    AddMessage('detected {} points in pandas dataframe'.format(lidar_points.size))
+    print("first 10 rows in pandas dataframe")
+    print(lidar_points[:10])
+    print("Data Type: {}".format(type(lidar_points)))
+    print("Array Shape: {}".format(lidar_points.shape))
+    print("Array Number of Dimensions: {}".format(lidar_points.ndim))
 
 
-def esri_numpy_operation_here(lidar_points):
+def numpy_operation_here(lidar_points):
     AddMessage('detected {} points in numpy array'.format(lidar_points.size))
     print("first 10 rows in numpy array")
     print(lidar_points[:10])
     print("Data Type: {}".format(type(lidar_points)))
-    print("Array Shape: {)".format(lidar_points.shape))
+    print("Array Shape: {}".format(lidar_points.shape))
     print("Array Number of Dimensions: {}".format(lidar_points.ndim))
 
+    '''
     # Convert values from 8-bit points to 64-bit points for processing in scikit
     pts_64 = lidar_points.view(np.float64).reshape(lidar_points.shape + (-1,))
-
     # Example of running scikit learn
     # Implement one of the following algorithms
     # https://scikit-learn.org/stable/modules/generated/sklearn.cluster.OPTICS.html  # sklearn.cluster.OPTICS
@@ -41,9 +48,10 @@ def esri_numpy_operation_here(lidar_points):
     mimumum_samples = 4
     clustering = OPTICS(min_samples=mimumum_samples, max_eps=dist, n_jobs=-1).fit(pts_64)
     print(clustering.labels_[:200])
+    '''
 
 
-def las_tile_to_numpy(lidar_tile, sr, returns, class_codes):
+def las_tile_to_numpy_pandas(lidar_tile, sr, returns, class_codes, format_for_library):
     temp_lasd = "{0}_temp.lasd".format(splitext(lidar_tile)[0])
     if Exists(temp_lasd):
         Delete(temp_lasd)
@@ -61,21 +69,28 @@ def las_tile_to_numpy(lidar_tile, sr, returns, class_codes):
                     _return=returns,
                     input_coordinate_system=sr)
 
-    lidar_points = da.FeatureClassToNumPyArray(in_table=temp_pts_multi,
-                                               # field_names=["OID@", "SHAPE@X", "SHAPE@Y", "SHAPE@Z"],
-                                               field_names=["SHAPE@X", "SHAPE@Y", "SHAPE@Z"],
-                                               # field_names=["SHAPE@XYZ"],
-                                               spatial_reference=sr,
-                                               explode_to_points=True)
-    Delete(temp_pts_multi)
+    if format_for_library == "numpy":
+        lidar_points = da.FeatureClassToNumPyArray(in_table=temp_pts_multi,
+                                                   # field_names=["OID@", "SHAPE@X", "SHAPE@Y", "SHAPE@Z"],
+                                                   field_names=["SHAPE@X", "SHAPE@Y", "SHAPE@Z"],
+                                                   # field_names=["SHAPE@XYZ"],
+                                                   spatial_reference=sr,
+                                                   explode_to_points=True)
+        Delete(temp_pts_multi)
+        # Numpy Processing Operation Goes Here!
+        numpy_operation_here(lidar_points)
 
-    # Numpy Processing Operation Goes Here!
-    esri_numpy_operation_here(lidar_points)
+    elif format_for_library == "pandas":
+        lidar_points = pd.DataFrame.spatial.from_featureclass(location=temp_pts_multi)
+                                                              #fields=["SHAPE@X", "SHAPE@Y", "SHAPE@Z"])
+        Delete(temp_pts_multi)
+        # Numpy Processing Operation Goes Here!
+        pandas_operation_here(lidar_points)
 
     del lidar_points
 
 
-def las_tiles_to_numpy(in_lidar_folder, sr, lidar_format, returns, class_codes):
+def las_tiles_to_numpy_pandas(in_lidar_folder, sr, lidar_format, returns, class_codes, format_for_library):
     class LicenseError(Exception):
         pass
 
@@ -99,7 +114,7 @@ def las_tiles_to_numpy(in_lidar_folder, sr, lidar_format, returns, class_codes):
         for tile in lidar_tiles:
             AddMessage("processing lidar tile {0} of {1} : {2}".format(count+1, len(lidar_tiles), tile))
             lidar_tile = join(in_lidar_folder, tile)
-            las_tile_to_numpy(lidar_tile, sr, returns, class_codes)
+            las_tile_to_numpy_pandas(lidar_tile, sr, returns, class_codes, format_for_library)
             count += 1
         AddMessage("processing {} lidar tiles complete".format(count))
 
@@ -114,13 +129,15 @@ def las_tiles_to_numpy(in_lidar_folder, sr, lidar_format, returns, class_codes):
 
 if __name__ == "__main__":
     # Input User Parameters
-    in_lidar_folder = r'C:\Users\geof7015\Documents\ArcGIS\Projects\LiDAR_Test\las_thinned_1m'
-    srXY = 6347
-    srZ = 115755
-    lidar_format = "las"
-    returns = "ANY_RETURNS"
-    class_codes = [5]
+
+    in_lidar_folder = r'C:\Users\geof7015\Documents\ArcGIS\Projects\LiDAR_Test\las_thinned_1m'  # Input folder containing LiDAR tiles
+    srXY = 6347  # Spatial Ref
+    srZ = 115755  # Vertical Coordinate System
+    lidar_format = "las"  # Input LiDAR format in folder.... typically "las" or "zlas"
+    returns = "ANY_RETURNS"  # Return to extract
+    class_codes = [5]  # List of LiDAR Classification codes to extract
+    format_for_library = "pandas"  # Set value to one of the following: "pandas", "numpy"
 
     # System Parameters + Script
     sr = arcpy.SpatialReference(srXY, srZ)
-    las_tiles_to_numpy(in_lidar_folder, sr, lidar_format, returns, class_codes)
+    las_tiles_to_numpy_pandas(in_lidar_folder, sr, lidar_format, returns, class_codes, format_for_library)
