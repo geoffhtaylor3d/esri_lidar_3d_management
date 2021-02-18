@@ -11,7 +11,7 @@ import pandas as pd
 from arcpy import AddError, CheckExtension, CheckOutExtension, CheckInExtension
 # Ensure Amazon AWS boto3 is installed
 try:
-    from boto3 import client
+    from boto3 import client, resource
 except ModuleNotFoundError:
     AddError("boto3 required to run process. Detected Boto3 missing.")
     AddError("install boto3 using conda")
@@ -46,9 +46,11 @@ def process():
             raise LicenseError
         try:
             bucket_url = 'https://s3.{0}.amazonaws.com/{1}/'.format(region, bucket_name)
-            conn = client('s3')  # again assumes boto.cfg setup, assume AWS S3
             f_list = []
             fp_list = []
+            '''
+            conn = client('s3')  # again assumes boto.cfg setup, assume AWS S3
+            
             for key in conn.list_objects(Bucket=bucket_name)['Contents']:
                 if not key['Key'].endswith('/') and list_folders is False:
                     f_list.append(key['Key'])
@@ -56,6 +58,17 @@ def process():
                 if list_folders is True:
                     f_list.append(key['Key'])
                     fp_list.append(bucket_url + key['Key'])
+            '''
+            s3r = resource('s3')
+            bucket_list = [item.key for item in list(s3r.Bucket(bucket_name).objects.all())]
+            for key in bucket_list:
+                if not key.endswith('/') and list_folders is False:
+                    f_list.append(key)
+                    fp_list.append(bucket_url + key)
+                if list_folders is True:
+                    f_list.append(key)
+                    fp_list.append(bucket_url + key)
+
 
             # Create a Pandas dataframe from the data.
             df = pd.DataFrame({'bucket_url': bucket_url, 'key': f_list, 'full_path': fp_list})
@@ -83,10 +96,11 @@ def process():
 if __name__ == "__main__":
     debug = False
     if debug:
+        ''''''
         # User Input Variables
-        bucket_name = 'esri-imagery-demo-data'
+        bucket_name = 'pge-mosaicimagery'
         region = 'us-east-1'
-        out_spreadsheet = 's3_bucket_files3.xlsx'
+        out_spreadsheet = r'C:\Users\geof7015\Documents\GitHub\esri_lidar_3d_management\test\s3_bucket_files3.xlsx'
         list_folders = False
     else:
         from arcpy import GetParameterAsText
