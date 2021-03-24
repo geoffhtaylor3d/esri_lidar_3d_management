@@ -9,7 +9,7 @@
 
 from arcpy.management import AddField, CopyFeatures, Delete
 from os.path import join, split
-from arcpy import AddError, env
+from arcpy import AddError, env, CheckOutExtension, CheckInExtension, ExecuteError, GetMessages
 import pandas as pd
 from arcpy import da
 from pathlib import Path
